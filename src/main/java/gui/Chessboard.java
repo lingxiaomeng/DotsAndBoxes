@@ -76,7 +76,8 @@ class Chessboard extends GridPane {
                     a[i][j] = Board_state.Button;
                     Button button = new Button("");
                     buttons.add(button);
-                    button.setPrefSize(10, 50);
+                    button.setMaxSize(10, 50);
+                    button.setMinSize(10, 50);
                     button.setId(generateId(i, j));
                     buttonAction(button);
                     board.add(button, i, j);
@@ -85,21 +86,24 @@ class Chessboard extends GridPane {
                     Button button = new Button("");
                     buttons.add(button);
                     button.setId(generateId(i, j));
-                    button.setPrefSize(50, 10);
+                    button.setMaxSize(50, 10);
+                    button.setMinSize(10, 50);
                     buttonAction(button);
                     board.add(button, i, j);
                 } else if (i > 0 && i < m - 1 && j > 0 && j < n - 1 && i % 2 == 1) {
                     a[i][j] = Board_state.BigLabel;
                     Label label = new Label("");
                     label.setId(generateId(i, j));
-                    label.setPrefSize(50, 50);
+                    label.setMaxSize(50, 50);
+                    label.setMinSize(50, 50);
                     labels.add(label);
                     board.add(label, i, j);
                 } else {
                     a[i][j] = Board_state.smallLabel;
                     Label label = new Label();
                     label.setId(generateId(i, j));
-                    label.setPrefSize(15, 15);
+                    label.setMinSize(10, 10);
+                    label.setMaxSize(10, 10);
                     label.setBackground(new Background(new BackgroundFill(Color.GRAY, null, null)));
                     board.add(label, i, j);
                 }
