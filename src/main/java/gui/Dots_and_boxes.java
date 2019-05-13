@@ -92,6 +92,7 @@ public class Dots_and_boxes extends Application {
                 chessboard.setAi(new RandomAI());
                 chessboard.generateMatrix(Integer.parseInt(msize.getText()), Integer.parseInt(nsize.getText()), Chessboard.Mode.PVC);
             } else if (cvc.isSelected()) {
+                chessboard.setAi(new RandomAI());
                 chessboard.generateMatrix(Integer.parseInt(msize.getText()), Integer.parseInt(nsize.getText()), Chessboard.Mode.CVC);
             }
         });

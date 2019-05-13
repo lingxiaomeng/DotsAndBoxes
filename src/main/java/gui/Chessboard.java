@@ -141,8 +141,8 @@ class Chessboard extends GridPane {
                     }
                 }
                 this.check();
-                stack.push(new State(this.step, this.matrix));
                 step++;
+                stack.push(new State(this.step, this.matrix));
             });
     }
 
