@@ -76,8 +76,8 @@ class Chessboard extends GridPane {
                     a[i][j] = Board_state.Button;
                     Button button = new Button("");
                     buttons.add(button);
-                    button.setMaxSize(10, 50);
-                    button.setMinSize(10, 50);
+                    button.setMaxSize(15, 50);
+                    button.setMinSize(15, 50);
                     button.setId(generateId(i, j));
                     buttonAction(button);
                     board.add(button, i, j);
@@ -86,8 +86,8 @@ class Chessboard extends GridPane {
                     Button button = new Button("");
                     buttons.add(button);
                     button.setId(generateId(i, j));
-                    button.setMaxSize(50, 10);
-                    button.setMinSize(10, 50);
+                    button.setMaxSize(50, 15);
+                    button.setMinSize(50, 15);
                     buttonAction(button);
                     board.add(button, i, j);
                 } else if (i > 0 && i < m - 1 && j > 0 && j < n - 1 && i % 2 == 1) {
@@ -102,8 +102,8 @@ class Chessboard extends GridPane {
                     a[i][j] = Board_state.smallLabel;
                     Label label = new Label();
                     label.setId(generateId(i, j));
-                    label.setMinSize(10, 10);
-                    label.setMaxSize(10, 10);
+                    label.setMinSize(15, 15);
+                    label.setMaxSize(15, 15);
                     label.setBackground(new Background(new BackgroundFill(Color.GRAY, null, null)));
                     board.add(label, i, j);
                 }
@@ -132,21 +132,24 @@ class Chessboard extends GridPane {
         if (this.mode == Mode.CVC)
             board.setOnMouseClicked(event -> {
                 Vector<Integer> v = this.getxy();
-                int x = v.get(0);
-                int y = v.get(1);
-                for (Button b : buttons
-                ) {
-                    if (b.getId().equals(this.generateId(x, y))) {
-                        if (step % 2 == 0) {
-                            matrix[x][y] = Board_state.A_Button;
-                        } else {
-                            matrix[x][y] = Board_state.B_button;
+                if (v.size() > 0) {
+                    int x = v.get(0);
+                    int y = v.get(1);
+
+                    for (Button b : buttons
+                    ) {
+                        if (b.getId().equals(this.generateId(x, y))) {
+                            if (step % 2 == 0) {
+                                matrix[x][y] = Board_state.A_Button;
+                            } else {
+                                matrix[x][y] = Board_state.B_button;
+                            }
                         }
                     }
+                    this.check();
+                    step++;
+                    stack.push(new State(this.step, this.matrix));
                 }
-                this.check();
-                step++;
-                stack.push(new State(this.step, this.matrix));
             });
     }
 
@@ -172,7 +175,7 @@ class Chessboard extends GridPane {
                         step++;
                     }
                     while (step % 2 == 0) {
-                        if (!AIAction(Board_state.A_Button)) break;
+                        if (AIAction(Board_state.A_Button)) break;
                     }
                     stack.push(new State(this.step, this.matrix));
 
@@ -183,7 +186,7 @@ class Chessboard extends GridPane {
                         step++;
                     }
                     while (step % 2 == 1) {
-                        if (!AIAction(Board_state.B_button)) break;
+                        if (AIAction(Board_state.B_button)) break;
                     }
                     stack.push(new State(this.step, this.matrix));
                 }
@@ -194,7 +197,7 @@ class Chessboard extends GridPane {
     private boolean AIAction(Board_state board_state) {
 
         Vector<Integer> v = this.getxy();
-        if (v.size() == 0) return false;
+        if (v.size() == 0) return true;
         int x = v.get(0);
         int y = v.get(1);
         for (Button b : buttons
@@ -205,7 +208,7 @@ class Chessboard extends GridPane {
         }
         this.check();
         step++;
-        return true;
+        return false;
     }
 
     private void check() {
@@ -256,13 +259,13 @@ class Chessboard extends GridPane {
         int a = 0;
         int b = 0;
         int no = 0;
-        for (int i = 0; i < matrix.length; i++) {
+        for (Board_state[] aMatrix : matrix) {
             for (int j = 0; j < matrix[0].length; j++) {
-                if (matrix[i][j] == Board_state.A_Label)
+                if (aMatrix[j] == Board_state.A_Label)
                     a++;
-                if (matrix[i][j] == Board_state.B_Label)
+                if (aMatrix[j] == Board_state.B_Label)
                     b++;
-                if (matrix[i][j] == Board_state.BigLabel)
+                if (aMatrix[j] == Board_state.BigLabel)
                     no++;
             }
         }
