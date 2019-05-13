@@ -31,7 +31,7 @@ class Chessboard extends GridPane {
     private Label B_label = new Label();
     private boolean aifirst = false;
     private Button undo = new Button("上一步");
-    private Stack<State> stack=new Stack<>();
+    private Stack<State> stack = new Stack<>();
 
     void setAifirst(boolean aifirst) {
         this.aifirst = aifirst;
@@ -102,8 +102,18 @@ class Chessboard extends GridPane {
         this.add(A_label, m, 0);
         this.add(B_label, m, 2);
         this.add(label, m, 4);
-        this.add(undo,m,5);
+        this.add(undo, m, 5);
         this.matrix = a;
+        this.undo.setOnAction(event -> {
+
+            this.stack.pop();
+            State state = this.stack.pop();
+            this.matrix = state.getBoard_state();
+            this.step = state.getStep();
+            check();
+        });
+
+        stack.push(new State(this.step, this.matrix));
         check();
         if (!(this.mode == Mode.PVP))
             ai.setBoardstates(this.matrix);
@@ -122,6 +132,7 @@ class Chessboard extends GridPane {
                         }
                     }
                 }
+                stack.push(new State(this.step, this.matrix));
                 this.check();
                 step++;
             });
@@ -134,47 +145,35 @@ class Chessboard extends GridPane {
             int j = this.getid(button.getId()).get(1);
 
             if (mode == Mode.PVP) {
-//                if (step % 2 == 0) {
-//                    button.setBackground(new Background(new BackgroundFill(Color.ORANGE, null, null)));
-//                } else {
-//                    button.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
-//                }
                 if (step % 2 == 0) {
                     matrix[i][j] = Board_state.A_Button;
                 } else matrix[i][j] = Board_state.B_button;
+                stack.push(new State(this.step, this.matrix));
                 this.check();
                 step++;
                 button.setDisable(true);
             } else if (mode == Mode.PVC) {
                 if (aifirst) {
                     if (step % 2 == 1) {
-//                        button.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
-//                        button.setDisable(true);
                         matrix[i][j] = Board_state.B_button;
+                        stack.push(new State(this.step, this.matrix));
                         this.check();
                         step++;
                     }
-
-
                     while (step % 2 == 0) {
                         if (!AIAction(Board_state.A_Button)) break;
                     }
                 } else {
                     if (step % 2 == 0) {
-//                        button.setBackground(new Background(new BackgroundFill(Color.ORANGE, null, null)));
-//                        button.setDisable(true);
                         matrix[i][j] = Board_state.A_Button;
+                        stack.push(new State(this.step, this.matrix));
                         this.check();
                         step++;
                     }
-
-
-//                printmatrix();
                     while (step % 2 == 1) {
                         if (!AIAction(Board_state.B_button)) break;
                     }
                 }
-//                printmatrix();
             } else if (this.mode == Mode.CVC) {
 
             }
@@ -211,6 +210,9 @@ class Chessboard extends GridPane {
             } else if (matrix[x][y] == Board_state.B_button) {
                 b.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
                 b.setDisable(true);
+            } else if (matrix[x][y] == Board_state.Button) {
+                b.setBackground(new Background(new BackgroundFill(null, null, null)));
+                b.setDisable(false);
             }
         }
 
@@ -265,6 +267,9 @@ class Chessboard extends GridPane {
         if (no == 0) {
             this.finished = true;
             this.label.setText(String.format("%s win", a > b ? A_name : (a == b ? "nobody" : B_name)));
+        } else {
+            this.finished = false;
+            this.label.setText("");
         }
     }
 
