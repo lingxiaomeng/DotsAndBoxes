@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 
 import java.util.ArrayList;
+import java.util.Stack;
 import java.util.Vector;
 
 
@@ -30,6 +31,7 @@ class Chessboard extends GridPane {
     private Label B_label = new Label();
     private boolean aifirst = false;
     private Button undo = new Button("上一步");
+    private Stack<State> stack=new Stack<>();
 
     void setAifirst(boolean aifirst) {
         this.aifirst = aifirst;
@@ -100,6 +102,7 @@ class Chessboard extends GridPane {
         this.add(A_label, m, 0);
         this.add(B_label, m, 2);
         this.add(label, m, 4);
+        this.add(undo,m,5);
         this.matrix = a;
         check();
         if (!(this.mode == Mode.PVP))
@@ -109,23 +112,14 @@ class Chessboard extends GridPane {
                 Vector<Integer> v = this.getxy();
                 int x = v.get(0);
                 int y = v.get(1);
-
-//                    System.out.println(x + " " + y);
                 for (Button b : buttons
                 ) {
-//                        System.out.println(b.getId());
                     if (b.getId().equals(this.generateId(x, y))) {
-
                         if (step % 2 == 0) {
-//                            b.setBackground(new Background(new BackgroundFill(Color.ORANGE, null, null)));
                             matrix[x][y] = Board_state.A_Button;
-//                            b.setDisable(true);
                         } else {
                             matrix[x][y] = Board_state.B_button;
-//                            b.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
-//                            b.setDisable(true);
                         }
-//                            printmatrix();
                     }
                 }
                 this.check();
