@@ -26,7 +26,7 @@ class Chessboard extends GridPane {
     private Board_state matrix[][];
     private ArrayList<Button> buttons = new ArrayList<>();
     private ArrayList<Label> labels = new ArrayList<>();
-    private Label label = new Label();
+    private Label label_win = new Label();
     private Label A_label = new Label();
     private Label B_label = new Label();
     private boolean aifirst = false;
@@ -45,6 +45,12 @@ class Chessboard extends GridPane {
         PVP, PVC, CVC
     }
 
+    private void setMatrix(Board_state[][] board_state) {
+        this.matrix = new Board_state[board_state.length][board_state[0].length];
+        for (int i = 0; i < board_state.length; i++) {
+            System.arraycopy(board_state[i], 0, this.matrix[i], 0, board_state[0].length);
+        }
+    }
 
     Chessboard() {
         this.setAlignment(Pos.CENTER);
@@ -54,6 +60,7 @@ class Chessboard extends GridPane {
     }
 
     void generateMatrix(int m, int n, Mode mode) {
+        this.stack = new Stack<>();
         this.step = 0;
         GridPane board = new GridPane();
         this.m = m;
@@ -101,16 +108,17 @@ class Chessboard extends GridPane {
         this.add(board, 0, 0, m, n);
         this.add(A_label, m, 0);
         this.add(B_label, m, 2);
-        this.add(label, m, 4);
+        this.add(label_win, m, 4);
         this.add(undo, m, 5);
         this.matrix = a;
         this.undo.setOnAction(event -> {
-
-            this.stack.pop();
-            State state = this.stack.pop();
-            this.matrix = state.getBoard_state();
-            this.step = state.getStep();
+            if (stack.size() > 1)
+                this.stack.pop();
+            State state = this.stack.peek();
+            setMatrix(state.getBoard_state());
             check();
+            this.step = state.getStep();
+
         });
 
         stack.push(new State(this.step, this.matrix));
@@ -132,8 +140,8 @@ class Chessboard extends GridPane {
                         }
                     }
                 }
-                stack.push(new State(this.step, this.matrix));
                 this.check();
+                stack.push(new State(this.step, this.matrix));
                 step++;
             });
     }
@@ -148,34 +156,33 @@ class Chessboard extends GridPane {
                 if (step % 2 == 0) {
                     matrix[i][j] = Board_state.A_Button;
                 } else matrix[i][j] = Board_state.B_button;
-                stack.push(new State(this.step, this.matrix));
                 this.check();
+                stack.push(new State(this.step, this.matrix));
                 step++;
-                button.setDisable(true);
             } else if (mode == Mode.PVC) {
                 if (aifirst) {
                     if (step % 2 == 1) {
                         matrix[i][j] = Board_state.B_button;
-                        stack.push(new State(this.step, this.matrix));
                         this.check();
+
                         step++;
                     }
                     while (step % 2 == 0) {
                         if (!AIAction(Board_state.A_Button)) break;
                     }
+                    stack.push(new State(this.step, this.matrix));
+
                 } else {
                     if (step % 2 == 0) {
                         matrix[i][j] = Board_state.A_Button;
-                        stack.push(new State(this.step, this.matrix));
                         this.check();
                         step++;
                     }
                     while (step % 2 == 1) {
                         if (!AIAction(Board_state.B_button)) break;
                     }
+                    stack.push(new State(this.step, this.matrix));
                 }
-            } else if (this.mode == Mode.CVC) {
-
             }
         });
     }
@@ -216,31 +223,24 @@ class Chessboard extends GridPane {
             }
         }
 
-        for (int i = 0; i < matrix.length; i++) {
-            for (int j = 0; j < matrix[0].length; j++) {
-                if (matrix[i][j] == Board_state.BigLabel) {
-                    if (matrix[i][j + 1].equals(Board_state.Pressed) && matrix[i][j - 1].equals(Board_state.Pressed) && matrix[i + 1][j].equals(Board_state.Pressed) && matrix[i - 1][j].equals(Board_state.Pressed)) {
-                        if (step % 2 == 0)
-                            matrix[i][j] = Board_state.A_Label;
-                        else matrix[i][j] = Board_state.B_Label;
-
-
-                        for (Label label : labels
-                        ) {
-                            if (i == getid(label.getId()).get(0) && j == getid(label.getId()).get(1)) {
-                                have = true;
-                                if (step % 2 == 0) {
-                                    label.setBackground(new Background(new BackgroundFill(Color.ORANGE, null, null)));
-                                } else {
-                                    label.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
-                                }
-
-                            }
-
-                        }
-                    }
-
+        for (Label label : labels) {
+            String id = label.getId();
+            int i = getid(id).get(0);
+            int j = getid(id).get(1);
+            if (matrix[i][j] == Board_state.BigLabel)
+                if (matrix[i][j + 1].equals(Board_state.Pressed) && matrix[i][j - 1].equals(Board_state.Pressed) &&
+                        matrix[i + 1][j].equals(Board_state.Pressed) && matrix[i - 1][j].equals(Board_state.Pressed)) {
+                    have = true;
+                    if (step % 2 == 0)
+                        matrix[i][j] = Board_state.A_Label;
+                    else matrix[i][j] = Board_state.B_Label;
                 }
+            if (matrix[i][j] == Board_state.A_Label) {
+                label.setBackground(new Background(new BackgroundFill(Color.ORANGE, null, null)));
+            } else if (matrix[i][j] == Board_state.B_Label) {
+                label.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+            } else if (matrix[i][j] == Board_state.BigLabel) {
+                label.setBackground(new Background(new BackgroundFill(null, null, null)));
             }
 
         }
@@ -266,10 +266,10 @@ class Chessboard extends GridPane {
         B_label.setText(String.format("%s得分: %d", B_name, b));
         if (no == 0) {
             this.finished = true;
-            this.label.setText(String.format("%s win", a > b ? A_name : (a == b ? "nobody" : B_name)));
+            this.label_win.setText(String.format("%s win", a > b ? A_name : (a == b ? "nobody" : B_name)));
         } else {
             this.finished = false;
-            this.label.setText("");
+            this.label_win.setText("");
         }
     }
 
@@ -298,5 +298,6 @@ class Chessboard extends GridPane {
             }
             System.out.println();
         }
+        System.out.println();
     }
 }

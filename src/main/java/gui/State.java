@@ -6,7 +6,14 @@ public class State {
 
     public State(int step, Board_state[][] board_state) {
         this.step = step;
-        this.board_state = board_state;
+        setBoard_state(board_state);
+    }
+
+    private void setBoard_state(Board_state[][] board_state) {
+        this.board_state = new Board_state[board_state.length][board_state[0].length];
+        for (int i = 0; i < board_state.length; i++) {
+            System.arraycopy(board_state[i], 0, this.board_state[i], 0, board_state[0].length);
+        }
     }
 
     public int getStep() {
