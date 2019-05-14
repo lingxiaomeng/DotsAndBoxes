@@ -4,7 +4,7 @@ public class State {
     private int step;
     private Board_state board_state[][];
 
-    public State(int step, Board_state[][] board_state) {
+    State(int step, Board_state[][] board_state) {
         this.step = step;
         setBoard_state(board_state);
     }
@@ -16,11 +16,11 @@ public class State {
         }
     }
 
-    public int getStep() {
+    int getStep() {
         return step;
     }
 
-    public Board_state[][] getBoard_state() {
+    Board_state[][] getBoard_state() {
         return board_state;
     }
 }

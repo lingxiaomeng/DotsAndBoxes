@@ -1,5 +1,8 @@
 package gui;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -8,7 +11,9 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
+import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Vector;
@@ -24,8 +29,8 @@ class Chessboard extends GridPane {
     private Mode mode;
     private boolean finished = false;
     private Board_state matrix[][];
-    private ArrayList<Button> buttons ;
-    private ArrayList<Label> labels ;
+    private ArrayList<Button> buttons;
+    private ArrayList<Label> labels;
     private Label label_win = new Label();
     private Label A_label = new Label();
     private Label B_label = new Label();
@@ -173,12 +178,19 @@ class Chessboard extends GridPane {
                     if (step % 2 == 1) {
                         matrix[i][j] = Board_state.B_button;
                         this.check();
-
                         step++;
                     }
-                    while (step % 2 == 0) {
-                        if (AIAction(Board_state.A_Button)) break;
-                    }
+                    new Thread(() -> {
+                        while (step % 2 == 0) {
+                            if (AIAction(Board_state.A_Button)) break;
+                            try {
+                                Thread.sleep(500);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }).start();
+
                     stack.push(new State(this.step, this.matrix));
 
                 } else {
@@ -187,9 +199,18 @@ class Chessboard extends GridPane {
                         this.check();
                         step++;
                     }
-                    while (step % 2 == 1) {
-                        if (AIAction(Board_state.B_button)) break;
-                    }
+
+                    new Thread(() -> {
+                        while (step % 2 == 1) {
+                            if (AIAction(Board_state.B_button)) break;
+                            try {
+                                Thread.sleep(500);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                    }).start();
                     stack.push(new State(this.step, this.matrix));
                 }
             }
@@ -208,7 +229,7 @@ class Chessboard extends GridPane {
                 matrix[x][y] = board_state;
             }
         }
-        this.check();
+        Platform.runLater(this::check);
         step++;
         return false;
     }

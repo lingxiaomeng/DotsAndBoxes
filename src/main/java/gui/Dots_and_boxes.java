@@ -65,20 +65,21 @@ public class Dots_and_boxes extends Application {
         RadioButton AIfirst = new RadioButton("电脑先手");
         RadioButton Peoplefirst = new RadioButton("玩家先手");
         ToggleGroup group1 = new ToggleGroup();
+        Peoplefirst.setSelected(true);
         AIfirst.setToggleGroup(group1);
         Peoplefirst.setToggleGroup(group1);
 
 
         HBox hBox3 = new HBox();
-        hBox3.getChildren().add(AIfirst);
         hBox3.getChildren().add(Peoplefirst);
+        hBox3.getChildren().add(AIfirst);
         hBox3.setSpacing(10);
         ObservableList<AI_method> options = FXCollections.observableArrayList(
                 ai_methods);
 
         final ComboBox<AI_method> comboBox = new ComboBox<>(options);
 
-        comboBox.getSelectionModel().select(0);
+        comboBox.getSelectionModel().selectFirst();
         HBox hBox4 = new HBox();
         hBox4.getChildren().add(new Label("选择难度:"));
         hBox4.getChildren().add(comboBox);
@@ -141,7 +142,7 @@ public class Dots_and_boxes extends Application {
                 } else if (cvc.isSelected()) {
                     if (comboBox.getValue() != null) {
                         chessboard.setAi(comboBox.getValue());
-                        chessboard.generateMatrix(m, n, Chessboard.Mode.PVC);
+                        chessboard.generateMatrix(m, n, Chessboard.Mode.CVC);
                     }
                 }
             } catch (NumberFormatException exception) {
