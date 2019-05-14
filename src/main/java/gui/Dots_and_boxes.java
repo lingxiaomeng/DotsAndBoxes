@@ -95,27 +95,17 @@ public class Dots_and_boxes extends Application {
                 grid.getChildren().remove(hBox4);
                 grid.add(hBox3, 0, 2, 1, 1);
                 grid.add(hBox4, 1, 2);
-//                hBox4.setVisible(true);
-//                hBox3.setVisible(true);
             } else if (cvc.isSelected()) {
                 grid.getChildren().remove(hBox3);
                 grid.getChildren().remove(hBox4);
                 grid.add(hBox4, 1, 2);
-//                grid.getChildren().remove(hBox4);
-//                hBox3.setVisible(false);
-//                hBox4.setVisible(true);
             } else {
                 grid.getChildren().remove(hBox3);
                 grid.getChildren().remove(hBox4);
-//                hBox3.setVisible(false);
-//                hBox4.setVisible(false);
             }
         });
-
-//        grid.add(hBox4, 1, 2);
         grid.add(hBox1, 0, 0, 2, 1);
         grid.add(hBox2, 0, 1, 2, 1);
-//        grid.add(hBox3, 0, 2, 1, 1);
         grid.add(button, 0, 3, 2, 1);
         grid.add(message, 0, 4, 2, 1);
         message.setVisible(false);

@@ -22,17 +22,17 @@ public class AI_easy extends AI_method implements AI {
         int y = 0;
         boolean finished = false;
         while (!finished) {
-            x = random.nextInt(boardstates.length);
-            y = random.nextInt(boardstates.length);
-//            System.out.println(boardstates[x][y]+" "+x+" "+y);
+            x = random.nextInt(board_states.length);
+            y = random.nextInt(board_states.length);
+//            System.out.println(board_states[x][y]+" "+x+" "+y);
             finished = true;
-            for (Board_state[] aMatrix : boardstates) {
-                for (int j = 0; j < boardstates[0].length; j++) {
+            for (Board_state[] aMatrix : board_states) {
+                for (int j = 0; j < board_states[0].length; j++) {
                     if (aMatrix[j] == Board_state.Button)
                         finished = false;
                 }
             }
-            if ((boardstates[x][y] == Board_state.Button)) {
+            if ((board_states[x][y] == Board_state.Button)) {
                 vector.add(x);
                 vector.add(y);
                 break;
@@ -45,8 +45,8 @@ public class AI_easy extends AI_method implements AI {
     }
 
     private void printmatrix() {
-        for (Board_state[] aMatrix : boardstates) {
-            for (int j = 0; j < boardstates[0].length; j++) {
+        for (Board_state[] aMatrix : board_states) {
+            for (int j = 0; j < board_states[0].length; j++) {
                 System.out.print(aMatrix[j] + " ");
             }
             System.out.println();

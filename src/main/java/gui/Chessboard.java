@@ -1,7 +1,5 @@
 package gui;
 
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -11,9 +9,7 @@ import javafx.scene.layout.Background;
 import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
-import javafx.util.Duration;
 
-import java.security.spec.ECField;
 import java.util.ArrayList;
 import java.util.Stack;
 import java.util.Vector;
@@ -135,7 +131,7 @@ class Chessboard extends GridPane {
         stack.push(new State(this.step, this.matrix));
         check();
         if (!(this.mode == Mode.PVP))
-            ai.setBoardstates(this.matrix);
+            ai.setBoard_states(this.matrix);
         if (this.mode == Mode.CVC)
             board.setOnMouseClicked(event -> {
                 Vector<Integer> v = this.getxy();
@@ -317,7 +313,7 @@ class Chessboard extends GridPane {
     }
 
     private Vector<Integer> getxy() {
-        ai.setBoardstates(matrix);
+        ai.setBoard_states(matrix);
         return ai.getxy();
     }
 

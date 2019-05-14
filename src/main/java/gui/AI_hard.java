@@ -16,7 +16,7 @@ public class AI_hard extends AI_method {
     }
 
     @Override
-    void setBoardstates(Board_state[][] boardstates) {
+    void setBoard_states(Board_state[][] board_states) {
 
 
     }

@@ -2,13 +2,13 @@ package gui;
 
 abstract class AI_method implements AI {
 
-    Board_state[][] boardstates;
+    Board_state[][] board_states;
 
     AI_method() {
 
     }
 
-    void setBoardstates(Board_state[][] boardstates) {
-        this.boardstates = boardstates;
+    void setBoard_states(Board_state[][] board_states) {
+        this.board_states = board_states;
     }
 }
