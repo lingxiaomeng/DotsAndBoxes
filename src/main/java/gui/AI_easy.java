@@ -3,12 +3,16 @@ package gui;
 import java.util.Random;
 import java.util.Vector;
 
-public class RandomAI extends AI_method implements AI {
+public class AI_easy extends AI_method implements AI {
 
-    RandomAI() {
+    AI_easy() {
 
     }
 
+    @Override
+    public String toString() {
+        return "随机";
+    }
 
     @Override
     public Vector<Integer> getxy() {

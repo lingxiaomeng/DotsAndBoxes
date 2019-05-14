@@ -1,12 +1,20 @@
 package gui;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
+
+import java.util.ArrayList;
 
 public class Dots_and_boxes extends Application {
     private TextField msize = new TextField();
@@ -15,6 +23,9 @@ public class Dots_and_boxes extends Application {
     private Button button = new Button("开始游戏");
     private Label label = new Label("棋盘大小:");
     private Label label1 = new Label("选择模式:");
+    private Label message = new Label();
+
+    private ArrayList<AI_method> ai_methods = new ArrayList<>();
 
     public static void main(String args[]) {
         launch(args);
@@ -23,6 +34,9 @@ public class Dots_and_boxes extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
+        ai_methods.add(new AI_easy());
+
         primaryStage.setTitle("Dots and Boxes");
         GridPane grid = new GridPane();
         msize.setMaxWidth(50);
@@ -59,6 +73,16 @@ public class Dots_and_boxes extends Application {
         hBox3.getChildren().add(AIfirst);
         hBox3.getChildren().add(Peoplefirst);
         hBox3.setSpacing(10);
+        ObservableList<AI_method> options = FXCollections.observableArrayList(
+                ai_methods);
+
+        final ComboBox<AI_method> comboBox = new ComboBox<>(options);
+
+        comboBox.getSelectionModel().select(0);
+        HBox hBox4 = new HBox();
+        hBox4.getChildren().add(new Label("选择难度:"));
+        hBox4.getChildren().add(comboBox);
+        hBox4.setSpacing(10);
 
         final ToggleGroup group = new ToggleGroup();
         pvp.setToggleGroup(group);
@@ -66,16 +90,34 @@ public class Dots_and_boxes extends Application {
         cvc.setToggleGroup(group);
         group.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (pvc.isSelected()) {
-                hBox3.setVisible(true);
+                grid.getChildren().remove(hBox3);
+                grid.getChildren().remove(hBox4);
+                grid.add(hBox3, 0, 2, 1, 1);
+                grid.add(hBox4, 1, 2);
+//                hBox4.setVisible(true);
+//                hBox3.setVisible(true);
+            } else if (cvc.isSelected()) {
+                grid.getChildren().remove(hBox3);
+                grid.getChildren().remove(hBox4);
+                grid.add(hBox4, 1, 2);
+//                grid.getChildren().remove(hBox4);
+//                hBox3.setVisible(false);
+//                hBox4.setVisible(true);
             } else {
-                hBox3.setVisible(false);
+                grid.getChildren().remove(hBox3);
+                grid.getChildren().remove(hBox4);
+//                hBox3.setVisible(false);
+//                hBox4.setVisible(false);
             }
         });
 
-        grid.add(hBox1, 0, 0);
-        grid.add(hBox2, 0, 1);
-        grid.add(hBox3, 0, 2);
-        grid.add(button, 0, 3);
+//        grid.add(hBox4, 1, 2);
+        grid.add(hBox1, 0, 0, 2, 1);
+        grid.add(hBox2, 0, 1, 2, 1);
+//        grid.add(hBox3, 0, 2, 1, 1);
+        grid.add(button, 0, 3, 2, 1);
+        grid.add(message, 0, 4, 2, 1);
+        message.setVisible(false);
         pvp.setSelected(true);
 
         Chessboard chessboard = new Chessboard();
@@ -84,16 +126,37 @@ public class Dots_and_boxes extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         button.setOnAction(event -> {
-            if (pvp.isSelected()) {
-                chessboard.generateMatrix(Integer.parseInt(msize.getText()), Integer.parseInt(nsize.getText()), Chessboard.Mode.PVP);
-            } else if (pvc.isSelected()) {
-                if (AIfirst.isSelected()) chessboard.setAifirst(true);
-                else chessboard.setAifirst(false);
-                chessboard.setAi(new RandomAI());
-                chessboard.generateMatrix(Integer.parseInt(msize.getText()), Integer.parseInt(nsize.getText()), Chessboard.Mode.PVC);
-            } else if (cvc.isSelected()) {
-                chessboard.setAi(new RandomAI());
-                chessboard.generateMatrix(Integer.parseInt(msize.getText()), Integer.parseInt(nsize.getText()), Chessboard.Mode.CVC);
+            try {
+                int m = Integer.parseInt(msize.getText());
+                int n = Integer.parseInt(nsize.getText());
+                if (pvp.isSelected()) {
+                    chessboard.generateMatrix(m, n, Chessboard.Mode.PVP);
+                } else if (pvc.isSelected()) {
+                    if (AIfirst.isSelected()) chessboard.setAifirst(true);
+                    else chessboard.setAifirst(false);
+                    if (comboBox.getValue() != null) {
+                        chessboard.setAi(comboBox.getValue());
+                        chessboard.generateMatrix(m, n, Chessboard.Mode.PVC);
+                    }
+                } else if (cvc.isSelected()) {
+                    if (comboBox.getValue() != null) {
+                        chessboard.setAi(comboBox.getValue());
+                        chessboard.generateMatrix(m, n, Chessboard.Mode.PVC);
+                    }
+                }
+            } catch (NumberFormatException exception) {
+
+                Timeline error = new Timeline(new KeyFrame(Duration.seconds(0), e -> {
+                    message.setTextFill(Color.RED);
+                    message.setText("请输入正确的数字");
+                    message.setVisible(true);
+                }), new KeyFrame(Duration.seconds(1), e -> {
+                    message.setVisible(false);
+//                message.setText("请选择文件");
+                }));
+                error.setCycleCount(1);
+                error.play();
+
             }
         });
     }

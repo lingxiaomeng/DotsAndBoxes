@@ -2,7 +2,7 @@ package gui;
 
 import java.util.Vector;
 
-public class AI_1 extends AI_method {
+public class AI_hard extends AI_method {
     private int x;
     private int y;
 
@@ -12,12 +12,13 @@ public class AI_1 extends AI_method {
 
     //private int playerId ;
 
-    AI_1() {
+    AI_hard() {
     }
 
     @Override
     void setBoardstates(Board_state[][] boardstates) {
-        super.setBoardstates(boardstates);
+
+
     }
 
     @Override

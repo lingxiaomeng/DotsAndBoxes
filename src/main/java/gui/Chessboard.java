@@ -24,8 +24,8 @@ class Chessboard extends GridPane {
     private Mode mode;
     private boolean finished = false;
     private Board_state matrix[][];
-    private ArrayList<Button> buttons = new ArrayList<>();
-    private ArrayList<Label> labels = new ArrayList<>();
+    private ArrayList<Button> buttons ;
+    private ArrayList<Label> labels ;
     private Label label_win = new Label();
     private Label A_label = new Label();
     private Label B_label = new Label();
@@ -60,6 +60,8 @@ class Chessboard extends GridPane {
     }
 
     void generateMatrix(int m, int n, Mode mode) {
+        this.buttons = new ArrayList<>();
+        this.labels = new ArrayList<>();
         this.stack = new Stack<>();
         this.step = 0;
         GridPane board = new GridPane();
