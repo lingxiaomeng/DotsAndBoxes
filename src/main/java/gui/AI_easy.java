@@ -11,7 +11,7 @@ public class AI_easy extends AI_method implements AI {
 
     @Override
     public String toString() {
-        return "随机";
+        return "简单";
     }
 
     @Override

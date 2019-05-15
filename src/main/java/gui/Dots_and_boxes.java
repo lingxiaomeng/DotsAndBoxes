@@ -34,9 +34,7 @@ public class Dots_and_boxes extends Application {
 
     @Override
     public void start(Stage primaryStage) {
-
         ai_methods.add(new AI_easy());
-
         primaryStage.setTitle("Dots and Boxes");
         GridPane grid = new GridPane();
         msize.setMaxWidth(50);
@@ -51,7 +49,6 @@ public class Dots_and_boxes extends Application {
         hBox1.getChildren().add(msize);
         hBox1.getChildren().add(symbolx);
         hBox1.getChildren().add(nsize);
-
         hBox2.setSpacing(10);
         RadioButton pvp = new RadioButton("双人对战");
         RadioButton pvc = new RadioButton("人机对战");
