@@ -63,15 +63,15 @@ public class Dots_and_boxes extends Application {
         hBox2.getChildren().add(cvc);
 
         RadioButton AIfirst = new RadioButton("电脑先手");
-        RadioButton Peoplefirst = new RadioButton("玩家先手");
+        RadioButton Playerfirst = new RadioButton("玩家先手");
         ToggleGroup group1 = new ToggleGroup();
-        Peoplefirst.setSelected(true);
+        Playerfirst.setSelected(true);
         AIfirst.setToggleGroup(group1);
-        Peoplefirst.setToggleGroup(group1);
+        Playerfirst.setToggleGroup(group1);
 
 
         HBox hBox3 = new HBox();
-        hBox3.getChildren().add(Peoplefirst);
+        hBox3.getChildren().add(Playerfirst);
         hBox3.getChildren().add(AIfirst);
         hBox3.setSpacing(10);
         ObservableList<AI_method> options = FXCollections.observableArrayList(
