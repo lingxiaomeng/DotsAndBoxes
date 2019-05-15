@@ -18,8 +18,8 @@ import java.util.Vector;
 
 class Chessboard extends GridPane {
     private AI_method ai;
-    private String A_name ;
-    private String B_name ;
+    private String A_name;
+    private String B_name;
     private Step step = Step.A;
     private int n;
     private int m;
@@ -35,7 +35,6 @@ class Chessboard extends GridPane {
     private Button undo = new Button("上一步");
     private Stack<State> stack = new Stack<>();
     private Alert alert = new Alert(Alert.AlertType.INFORMATION);
-
 
 
     void setAifirst(boolean aifirst) {
@@ -130,15 +129,15 @@ class Chessboard extends GridPane {
             check();
             this.step = state.getStep();
         });
-        if ((this.mode == Mode.PVC)) {
+        if (this.mode == Mode.PVC) {
             ai.setBoard_states(this.matrix);
             if (aifirst) {
                 buttons.get(0).fire();
-                A_name = "Computer A";
-                B_name = "Player B";
+                A_name = "Computer";
+                B_name = "Player";
             } else {
-                A_name = "Player A";
-                B_name = "Computer B";
+                A_name = "Player";
+                B_name = "Computer";
             }
         } else if (this.mode == Mode.CVC) {
             A_name = "Computer A";
