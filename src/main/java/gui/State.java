@@ -1,10 +1,10 @@
 package gui;
 
 public class State {
-    private int step;
+    private Step step;
     private Board_state board_state[][];
 
-    State(int step, Board_state[][] board_state) {
+    State(Step step, Board_state[][] board_state) {
         this.step = step;
         setBoard_state(board_state);
     }
@@ -16,7 +16,7 @@ public class State {
         }
     }
 
-    int getStep() {
+    Step getStep() {
         return step;
     }
 

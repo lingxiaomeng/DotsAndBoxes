@@ -3,6 +3,7 @@ package gui;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Background;
@@ -17,9 +18,9 @@ import java.util.Vector;
 
 class Chessboard extends GridPane {
     private AI_method ai;
-    private String A_name = "Player A";
-    private String B_name = "Player B";
-    private int step = 0;
+    private String A_name ;
+    private String B_name ;
+    private Step step = Step.A;
     private int n;
     private int m;
     private Mode mode;
@@ -33,6 +34,9 @@ class Chessboard extends GridPane {
     private boolean aifirst = false;
     private Button undo = new Button("上一步");
     private Stack<State> stack = new Stack<>();
+    private Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+
 
     void setAifirst(boolean aifirst) {
         this.aifirst = aifirst;
@@ -64,7 +68,7 @@ class Chessboard extends GridPane {
         this.buttons = new ArrayList<>();
         this.labels = new ArrayList<>();
         this.stack = new Stack<>();
-        this.step = 0;
+        this.step = Step.A;
         GridPane board = new GridPane();
         this.m = m;
         this.n = n;
@@ -125,14 +129,21 @@ class Chessboard extends GridPane {
             setMatrix(state.getBoard_state());
             check();
             this.step = state.getStep();
-
         });
-
-        stack.push(new State(this.step, this.matrix));
-        check();
-        if (!(this.mode == Mode.PVP))
+        if ((this.mode == Mode.PVC)) {
             ai.setBoard_states(this.matrix);
-        if (this.mode == Mode.CVC)
+            if (aifirst) {
+                buttons.get(0).fire();
+                A_name = "Computer A";
+                B_name = "Player B";
+            } else {
+                A_name = "Player A";
+                B_name = "Computer B";
+            }
+        } else if (this.mode == Mode.CVC) {
+            A_name = "Computer A";
+            B_name = "Computer B";
+            ai.setBoard_states(this.matrix);
             board.setOnMouseClicked(event -> {
                 Vector<Integer> v = this.getxy();
                 if (v.size() > 0) {
@@ -142,42 +153,59 @@ class Chessboard extends GridPane {
                     for (Button b : buttons
                     ) {
                         if (b.getId().equals(this.generateId(x, y))) {
-                            if (step % 2 == 0) {
+                            if (step == Step.A) {
                                 matrix[x][y] = Board_state.A_Button;
-                            } else {
+                            } else if (step == Step.B) {
                                 matrix[x][y] = Board_state.B_button;
                             }
                         }
                     }
-                    this.check();
-                    step++;
+                    if (!this.check()) this.step = this.step.reverse();
                     stack.push(new State(this.step, this.matrix));
                 }
             });
+        } else {
+            A_name = "Player A";
+            B_name = "Player B";
+        }
+
+
+        stack.push(new State(this.step, this.matrix));
+        check();
     }
 
     private void buttonAction(Button button) {
+        button.setOnMouseEntered(event -> {
+            if (step == Step.A) {
+                button.setBackground(new Background(new BackgroundFill(Color.ORANGE, null, null)));
+            } else button.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
+        });
+        button.setOnMouseExited(event -> {
+            int i = this.getid(button.getId()).get(0);
+            int j = this.getid(button.getId()).get(1);
+            if (matrix[i][j] == Board_state.Button)
+                button.setBackground(new Background(new BackgroundFill(null, null, null)));
+        });
         button.setOnAction(event -> {
 //            this.printmatrix();
             int i = this.getid(button.getId()).get(0);
             int j = this.getid(button.getId()).get(1);
 
             if (mode == Mode.PVP) {
-                if (step % 2 == 0) {
+                if (step == Step.A) {
                     matrix[i][j] = Board_state.A_Button;
-                } else matrix[i][j] = Board_state.B_button;
-                this.check();
+                } else if (step == Step.B) matrix[i][j] = Board_state.B_button;
+                if (!this.check()) this.step = this.step.reverse();
                 stack.push(new State(this.step, this.matrix));
-                step++;
             } else if (mode == Mode.PVC) {
                 if (aifirst) {
-                    if (step % 2 == 1) {
+
+                    if (step == Step.B) {
                         matrix[i][j] = Board_state.B_button;
-                        this.check();
-                        step++;
+                        if (!this.check()) this.step = this.step.reverse();
                     }
                     new Thread(() -> {
-                        while (step % 2 == 0) {
+                        while (step == Step.A) {
                             if (AIAction(Board_state.A_Button)) break;
                             try {
                                 Thread.sleep(500);
@@ -185,19 +213,16 @@ class Chessboard extends GridPane {
                                 e.printStackTrace();
                             }
                         }
+                        stack.push(new State(this.step, this.matrix));
                     }).start();
 
-                    stack.push(new State(this.step, this.matrix));
-
                 } else {
-                    if (step % 2 == 0) {
+                    if (step == Step.A) {
                         matrix[i][j] = Board_state.A_Button;
-                        this.check();
-                        step++;
+                        if (!this.check()) this.step = this.step.reverse();
                     }
-
                     new Thread(() -> {
-                        while (step % 2 == 1) {
+                        while (step == Step.B) {
                             if (AIAction(Board_state.B_button)) break;
                             try {
                                 Thread.sleep(500);
@@ -205,9 +230,9 @@ class Chessboard extends GridPane {
                                 e.printStackTrace();
                             }
                         }
-
+                        stack.push(new State(this.step, this.matrix));
                     }).start();
-                    stack.push(new State(this.step, this.matrix));
+
                 }
             }
         });
@@ -225,12 +250,13 @@ class Chessboard extends GridPane {
                 matrix[x][y] = board_state;
             }
         }
-        Platform.runLater(this::check);
-        step++;
+        Platform.runLater(() -> {
+            if (!Chessboard.this.check()) Chessboard.this.step = Chessboard.this.step.reverse();
+        });
         return false;
     }
 
-    private void check() {
+    private boolean check() {
         boolean have = false;
         for (Button b : buttons
         ) {
@@ -257,9 +283,9 @@ class Chessboard extends GridPane {
                 if (matrix[i][j + 1].equals(Board_state.Pressed) && matrix[i][j - 1].equals(Board_state.Pressed) &&
                         matrix[i + 1][j].equals(Board_state.Pressed) && matrix[i - 1][j].equals(Board_state.Pressed)) {
                     have = true;
-                    if (step % 2 == 0)
+                    if (step == Step.A)
                         matrix[i][j] = Board_state.A_Label;
-                    else matrix[i][j] = Board_state.B_Label;
+                    else if (step == Step.B) matrix[i][j] = Board_state.B_Label;
                 }
             if (matrix[i][j] == Board_state.A_Label) {
                 label.setBackground(new Background(new BackgroundFill(Color.ORANGE, null, null)));
@@ -270,8 +296,8 @@ class Chessboard extends GridPane {
             }
 
         }
-        if (have) step++;
         checkFinished();
+        return have;
     }
 
     private void checkFinished() {
@@ -293,6 +319,10 @@ class Chessboard extends GridPane {
         if (no == 0) {
             this.finished = true;
             this.label_win.setText(String.format("%s win", a > b ? A_name : (a == b ? "nobody" : B_name)));
+            alert.setTitle("游戏结束");
+            alert.setHeaderText(null);
+            alert.setContentText(String.format("%s win", a > b ? A_name : (a == b ? "nobody" : B_name)));
+            alert.show();
         } else {
             this.finished = false;
             this.label_win.setText("");
