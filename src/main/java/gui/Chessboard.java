@@ -180,15 +180,15 @@ class Chessboard extends GridPane {
             } else button.setBackground(new Background(new BackgroundFill(Color.GREEN, null, null)));
         });
         button.setOnMouseExited(event -> {
-            int i = this.getid(button.getId()).get(0);
-            int j = this.getid(button.getId()).get(1);
+            int i = this.getId(button.getId()).get(0);
+            int j = this.getId(button.getId()).get(1);
             if (matrix[i][j] == Board_state.Button)
                 button.setBackground(new Background(new BackgroundFill(null, null, null)));
         });
         button.setOnAction(event -> {
 //            this.printmatrix();
-            int i = this.getid(button.getId()).get(0);
-            int j = this.getid(button.getId()).get(1);
+            int i = this.getId(button.getId()).get(0);
+            int j = this.getId(button.getId()).get(1);
 
             if (mode == Mode.PVP) {
                 if (step == Step.A) {
@@ -260,8 +260,8 @@ class Chessboard extends GridPane {
         for (Button b : buttons
         ) {
             String id = b.getId();
-            int x = getid(id).get(0);
-            int y = getid(id).get(1);
+            int x = getId(id).get(0);
+            int y = getId(id).get(1);
             if (matrix[x][y] == Board_state.A_Button) {
                 b.setBackground(new Background(new BackgroundFill(Color.ORANGE, null, null)));
                 b.setDisable(true);
@@ -276,8 +276,8 @@ class Chessboard extends GridPane {
 
         for (Label label : labels) {
             String id = label.getId();
-            int i = getid(id).get(0);
-            int j = getid(id).get(1);
+            int i = getId(id).get(0);
+            int j = getId(id).get(1);
             if (matrix[i][j] == Board_state.BigLabel)
                 if (matrix[i][j + 1].equals(Board_state.Pressed) && matrix[i][j - 1].equals(Board_state.Pressed) &&
                         matrix[i + 1][j].equals(Board_state.Pressed) && matrix[i - 1][j].equals(Board_state.Pressed)) {
@@ -332,7 +332,7 @@ class Chessboard extends GridPane {
         return String.format("%d,%d", i, j);
     }
 
-    private Vector<Integer> getid(String id) {
+    private Vector<Integer> getId(String id) {
         int i = Integer.parseInt(id.split(",")[0]);
         int j = Integer.parseInt(id.split(",")[1]);
         Vector<Integer> vector = new Vector<>();
@@ -345,14 +345,14 @@ class Chessboard extends GridPane {
         ai.setBoard_states(matrix);
         return ai.getxy();
     }
-
-    private void printmatrix() {
-        for (Board_state[] aMatrix : matrix) {
-            for (int j = 0; j < matrix[0].length; j++) {
-                System.out.print(aMatrix[j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println();
-    }
+//
+//    private void printmatrix() {
+//        for (Board_state[] aMatrix : matrix) {
+//            for (int j = 0; j < matrix[0].length; j++) {
+//                System.out.print(aMatrix[j] + " ");
+//            }
+//            System.out.println();
+//        }
+//        System.out.println();
+//    }
 }
