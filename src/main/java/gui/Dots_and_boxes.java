@@ -151,15 +151,5 @@ public class Dots_and_boxes extends Application {
             }
         });
     }
-
-//
-//    private void printmatrix() {
-//        for (int[] aMatrix : matrix) {
-//            for (int j = 0; j < matrix[0].length; j++) {
-//                System.out.print(aMatrix[j] + " ");
-//            }
-//            System.out.println();
-//        }
-//    }
 }
 
