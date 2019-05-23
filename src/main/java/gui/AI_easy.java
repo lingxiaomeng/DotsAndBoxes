@@ -23,7 +23,7 @@ public class AI_easy extends AI_method implements AI {
         boolean finished = false;
         while (!finished) {
             x = random.nextInt(board_states.length);
-            y = random.nextInt(board_states.length);
+            y = random.nextInt(board_states[0].length);
 //            System.out.println(board_states[x][y]+" "+x+" "+y);
             finished = true;
             for (Board_state[] aMatrix : board_states) {
@@ -42,14 +42,5 @@ public class AI_easy extends AI_method implements AI {
 //        System.out.println(vector);
 
         return vector;
-    }
-
-    private void printmatrix() {
-        for (Board_state[] aMatrix : board_states) {
-            for (int j = 0; j < board_states[0].length; j++) {
-                System.out.print(aMatrix[j] + " ");
-            }
-            System.out.println();
-        }
     }
 }

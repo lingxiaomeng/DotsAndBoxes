@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class Dots_and_boxes extends Application {
     private TextField msize = new TextField();
@@ -35,6 +36,7 @@ public class Dots_and_boxes extends Application {
     @Override
     public void start(Stage primaryStage) {
         ai_methods.add(new AI_easy());
+        ai_methods.add(new AI_Medium());
         primaryStage.setTitle("Dots and Boxes");
         GridPane grid = new GridPane();
         msize.setMaxWidth(50);
